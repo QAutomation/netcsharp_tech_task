@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "host": "",
+    "PersonalToken": "",
+    "Organization": "",
+    "Project": "",
+    "from": "del.sys.noreply@gmail.com",
+    "to": "",
+    "port": "587",
+    "smtpHost": "smtp.gmail.com",
+    "login": "del.sys.noreply@gmail.com",
+    "appToken": ""
+  }
+}

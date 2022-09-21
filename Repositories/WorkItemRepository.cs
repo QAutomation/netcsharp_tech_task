@@ -1,33 +1,32 @@
 ﻿using PBITracker.ApiClients;
 using PBITracker.Interfaces;
 using PBITracker.Models;
-using PBITracker.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PBITracker.Repositories
 {
-    public class WorkItemRepository : IRepository<EntityBase>
+    public class WorkItemRepository : IRepository<WorkItemModel>
     {
-        private readonly IDataProvider dataProvider;
+        private readonly IDataProvider<WorkItemModel> dataProvider;
 
-        public WorkItemRepository(IDataProvider dataProvider)
+        public WorkItemRepository(IDataProvider<WorkItemModel> dataProvider)
         {
             this.dataProvider = dataProvider;
         }
 
-        public async Task<IEnumerable<EntityBase>> FindAll()
+        public async Task<IEnumerable<WorkItemModel>> FindAll()
         {
             return await dataProvider.GetData(new Dictionary<string, string>());
         }
 
-        public async Task<IEnumerable<EntityBase>> FindAfterDate(DateTime dateTime)
+        public async Task<IEnumerable<WorkItemModel>> FindAfterDate(DateTime dateTime)
         {
             return await dataProvider.GetData(GetQueryParameters(dateTime));
         }
 
-        public async Task<IEnumerable<EntityBase>> FindById(params int[] values)
+        public async Task<IEnumerable<WorkItemModel>> FindById(params int[] values)
         {
             return await dataProvider.GetData(GetQueryParameters(values));
         }

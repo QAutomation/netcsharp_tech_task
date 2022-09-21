@@ -7,8 +7,8 @@ namespace PBITracker.Interfaces
 {
     public interface IRepository<T> where T : EntityBase
     {
-        Task<IEnumerable<EntityBase>> FindAfterDate(DateTime dateTime);
-        Task<IEnumerable<EntityBase>> FindById(params int[] values);
-        Task<IEnumerable<EntityBase>> FindAll();
+        Task<IEnumerable<T>> FindAfterDate(DateTime dateTime);
+        Task<IEnumerable<T>> FindById(params int[] values);
+        Task<IEnumerable<T>> FindAll();
     }
 }

@@ -10,22 +10,21 @@ using System.Threading.Tasks;
 
 namespace PBITracker.ApiClients
 {
-    public class WorkItemsApiProvider : IDataProvider
+    public class WorkItemsApiProvider : IDataProvider<WorkItemModel>
     {
         private const string WORKITEMS = "WorkItems";
-        private readonly Hashtable config = (Hashtable)Environment.GetEnvironmentVariables();
         private readonly RestClient client;
 
-        public WorkItemsApiProvider()
+        public WorkItemsApiProvider(Hashtable config)
         {
             client = new RestClient($"{config["host"]}/{config["Organization"]}/{config["Project"]}/_odata/v4.0-preview/")
             { AcceptedContentTypes = new string[] { "application/json" } }
                         .AddDefaultHeader("Authorization", $"Basic {Get64BitValue(string.Format("{0}:{1}", "", config["PersonalToken"]))}");
         }
 
-        public async Task<IEnumerable<EntityBase>> GetData(IDictionary<string, string> filters)
+        public async Task<IEnumerable<WorkItemModel>> GetData(IDictionary<string, string> filters)
         {
-            var request = new RestRequest($"{WORKITEMS}") { Method = Method.Get };
+            var request = new RestRequest($"{WORKITEMS}");
             request.AddQueryParameter("$select", "WorkItemId,WorkItemType,Title,State");
             foreach (var kvp in filters)
             {
@@ -37,6 +36,10 @@ namespace PBITracker.ApiClients
             if (response.IsSuccessful)
             {
                 result = JsonConvert.DeserializeObject<WorkitemsQueryResponseModel>(response.Content);
+            }
+            else
+            {
+                throw new Exception($"{response.StatusCode} : {response.Content} ");
             }
             return result.Value;
         }

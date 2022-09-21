@@ -6,6 +6,8 @@ using PBITracker.Interfaces;
 using PBITracker.Models;
 using PBITracker.Models.Entities;
 using PBITracker.Repositories;
+using System;
+using System.Collections;
 
 [assembly: FunctionsStartup(typeof(PBITracker.Startup))]
 namespace PBITracker
@@ -14,9 +16,10 @@ namespace PBITracker
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddSingleton<IDataProvider, WorkItemsApiProvider>();
-            builder.Services.AddSingleton<IRepository<EntityBase>, WorkItemRepository>();
+            builder.Services.AddSingleton<IDataProvider<WorkItemModel>, WorkItemsApiProvider>();
+            builder.Services.AddSingleton<IRepository<WorkItemModel>, WorkItemRepository>();
             builder.Services.AddSingleton<INotifier, MailNotifier>();
+            builder.Services.AddTransient(a=>(Hashtable)Environment.GetEnvironmentVariables());
         }
     }
 }

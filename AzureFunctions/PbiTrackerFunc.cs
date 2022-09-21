@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,11 +14,10 @@ namespace PBITracker.AzureFunctions
 {
     public class PbiTrackerFunc
     {
-        private ILogger log;
-        private readonly IRepository<EntityBase> repo;
+        private readonly IRepository<WorkItemModel> repo;
         private readonly INotifier notifier;
 
-        public PbiTrackerFunc(IRepository<EntityBase> repo, INotifier notifier)
+        public PbiTrackerFunc(IRepository<WorkItemModel> repo, INotifier notifier, Hashtable config)
         {
             this.repo = repo ?? throw new ArgumentNullException(nameof(repo));
             this.notifier = notifier;
@@ -26,13 +26,12 @@ namespace PBITracker.AzureFunctions
         [FunctionName("PbiTrackerFunc")]
         public async Task Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer, ILogger logger)
         {
-            log = logger;
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-            var items = (IEnumerable<WorkItemModel>)await repo.FindAfterDate(GetTimeWithGap());
+            logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            var items = await repo.FindAfterDate(myTimer.ScheduleStatus.LastUpdated.ToUniversalTime());
             if (items.Count() > 0)
             {
-                log.LogWarning($"{items.Count()} items detected");
-                items.ToList().ForEach(x => log.LogWarning($"{x.Id} {x.State} {x.Title} {x.WorkItemType}"));
+                logger.LogWarning($"{items.Count()} items detected");
+                items.ToList().ForEach(x => logger.LogWarning($"{x.Id} {x.State} {x.Title} {x.WorkItemType}"));
                 await notifier.Notify($"{items.Count()} new items detected"); ;
             }
         }

@@ -8,12 +8,11 @@ namespace PBITracker.Clients
 {
     public class MailNotifier : INotifier
     {
-        private readonly IDictionary config = Environment.GetEnvironmentVariables();
         private readonly SmtpClient client;
         private readonly MailAddress fromAddress;
         private readonly MailAddress toAddress;
 
-        public MailNotifier()
+        public MailNotifier(Hashtable config)
         {
             client = new SmtpClient()
             {
